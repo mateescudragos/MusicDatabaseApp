@@ -22,6 +22,7 @@ public class Controller {
         try {
             dataSource.open();
             System.out.println(dataSource.queryAlbums(ORDER_BY_ASC).size());
+            dataSource.extractSongsMetadata();
             dataSource.close();
         } catch (DatabaseException | QueryException e) {
             System.out.println(e.getMessage());

@@ -41,6 +41,14 @@ public class Datasource {
     public static final int ORDER_BY_DESC = 3;
 
 
+
+    private static final String CREATE_SONGS_VIEW = "CREATE VIEW IF NOT EXISTS artist_list AS SELECT "+TABLE_ARTISTS+"."+COLUMN_ARTIST_NAME+" AS Artist, "
+                +TABLE_SONGS+"."+COLUMN_SONG_TRACK+" AS Track, "+TABLE_SONGS+"."+COLUMN_SONG_TITLE+" AS Song, "+TABLE_ALBUMS+"."+COLUMN_ALBUM_NAME+" AS Album FROM "+TABLE_SONGS+
+            " INNER JOIN "+TABLE_ALBUMS+" ON "+TABLE_SONGS+"."+COLUMN_SONG_ALBUM+" = "+TABLE_ALBUMS+"."+COLUMN_ALBUM_ID+
+            " INNER JOIN "+TABLE_ARTISTS+" ON "+TABLE_ALBUMS+"."+COLUMN_ALBUM_ARTIST+" = "+TABLE_ARTISTS+"."+COLUMN_ARTIST_ID+
+            " ORDER BY "+TABLE_ARTISTS+"."+COLUMN_ARTIST_NAME+","+TABLE_ALBUMS+"."+COLUMN_ALBUM_NAME+", "+TABLE_SONGS+"."+COLUMN_SONG_TRACK;
+
+
     private static Datasource datasource;
 
     private List<Song> songs;
@@ -81,6 +89,15 @@ public class Datasource {
              System.out.println("Error while closing Music Database!");
              e.printStackTrace();
              throw new DatabaseException();
+         }
+     }
+
+     public void extractSongsMetadata(){
+         try(Statement statement = connection.createStatement()){
+             statement.execute(CREATE_SONGS_VIEW);
+             statement.executeQuery("SELECT * FROM artist_list");
+         }catch (SQLException e){
+             e.printStackTrace();
          }
      }
 
